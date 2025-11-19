@@ -32,7 +32,7 @@ export const PROFILE: ProfileData = {
       major: "Education (Educational Research)",
       institution: "University of Alabama",
       location: "USA",
-      period: "2024–present"
+      period: "2025–present"
     },
     {
       degree: "Master of Education",
