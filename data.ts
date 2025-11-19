@@ -32,7 +32,7 @@ export const PROFILE: ProfileData = {
       major: "Education (Educational Research)",
       institution: "University of Alabama",
       location: "USA",
-      period: "2025–present"
+      period: "2024–present"
     },
     {
       degree: "Master of Education",
@@ -54,7 +54,7 @@ export const PROFILE: ProfileData = {
       role: "Teaching Assistant",
       company: "The University of Alabama",
       type: "Part-time",
-      period: "Aug 2024 - Present",
+      period: "Aug 2025 - Present",
       location: "Tuscaloosa, Alabama, United States",
       description: "Developed tutorial materials, data examples for BER 345: Educational Statistics, supporting undergraduate students in statistical concepts and applied data analysis. Held office hours to assist students with course material and homework assignments."
     },
