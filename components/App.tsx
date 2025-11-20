@@ -105,15 +105,9 @@ function App() {
                        <Download size={18} /> Download CV
                      </h3>
                      <p className="text-sm text-slate-500 mb-4">Get the full detailed resume in PDF format.</p>
-                     {/* CHANGE THE HREF BELOW TO YOUR CV PATH */}
-                     <a 
-                       href="./cv.pdf" 
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       className="block text-center bg-slate-900 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-crimson-700 transition-colors w-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200"
-                     >
+                     <button className="bg-slate-900 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-crimson-700 transition-colors w-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
                        Download PDF
-                     </a>
+                     </button>
                    </div>
 
                    {/* Research Interests - Moved here */}

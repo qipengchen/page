@@ -19,7 +19,7 @@ export const PROFILE: ProfileData = {
     googleScholar: "https://scholar.google.com/citations?user=8qSJ1GYAAAAJ&hl=en",
     linkedin: "https://www.linkedin.com/in/qipeng-chen-604528271/"
   },
-  bio: "Hi! I am a Ph.D. researcher at the University of Alabama, specializing in Educational Research Methods. My work centers on leveraging process data to enhance test security and provide deeper assessment insights. I am currently researching the application of change-point detection for identifying item compromise.",
+  bio: "Hi! I am a Ph.D. researcher at the University of Alabama, specializing in Educational Research Methods. My work centers on leveraging process data to enhance test security and provide deeper assessment insights.",
   interests: [
     "Process Data Applications",
     "Aberrant Response Behaviors",
@@ -54,9 +54,9 @@ export const PROFILE: ProfileData = {
       role: "Teaching Assistant",
       company: "The University of Alabama",
       type: "Part-time",
-      period: "Aug 2025 - Present",
+      period: "Aug 2024 - Present",
       location: "Tuscaloosa, Alabama, United States",
-      description: "Developed tutorial materials, data examples for BER 345: Educational Statistics, supporting undergraduate students in statistical concepts and applied data analysis. Held office hours to assist students with course material and homework assignments."
+      description: "Developed tutorial materials, data examples for BER 345: Educational Statistics, supporting undergraduate students in statistical concepts and applied data analysis."
     },
     {
       role: "Assessment Analyst",
