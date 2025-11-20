@@ -124,7 +124,7 @@ function App() {
                       <h3 className="font-serif font-bold text-slate-900 mb-4 text-sm uppercase tracking-wider">Research Interests</h3>
                       <div className="flex flex-wrap gap-2">
                         {PROFILE.interests.map(tag => (
-                          <span key={tag} className="bg-crimson-50 text-crimson-700 px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide border border-crimson-100 hover:bg-crimson-100 transition-colors cursor-default">
+                          <span key={tag} className="bg-crimson-50 text-crimson-700 px-3 py-1.5 rounded text-xs font-bold border border-crimson-100 hover:bg-crimson-100 transition-colors cursor-default">
                             {tag}
                           </span>
                         ))}
