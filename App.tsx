@@ -84,7 +84,7 @@ function App() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 animate-fade-in-up delay-200">
                 <div className="bg-white p-6 rounded-lg border-l-4 border-crimson-600 shadow-sm hover:shadow-md transition-shadow duration-300">
-                   <h3 className="font-serif font-bold text-slate-900 mb-4">Education</h3>
+                   <h3 className="font-serif font-bold text-slate-900 mb-4 uppercase tracking-wider">Education</h3>
                    <div className="space-y-6">
                      {PROFILE.education.map((edu, i) => (
                        <div key={i} className="relative pl-4 border-l border-slate-200">
