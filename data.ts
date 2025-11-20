@@ -28,18 +28,20 @@ export const PROFILE: ProfileData = {
   ],
   education: [
     {
-      degree: "Ph.D. Student",
+      degree: "Doctor of Philosophy",
       major: "Education (Educational Research)",
       institution: "University of Alabama",
       location: "USA",
-      period: "2024–present"
+      period: "2024–present",
+      advisor: "Advisor: Kaiwen Man"
     },
     {
       degree: "Master of Education",
       major: "Applied Psychology",
       institution: "Zhejiang Normal University",
       location: "China",
-      period: "2020–2023"
+      period: "2020–2023",
+      advisor: "Advisor: Peida Zhan"
     },
     {
       degree: "Bachelor of Education",

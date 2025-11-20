@@ -5,6 +5,7 @@ export interface Education {
   institution: string;
   location: string;
   period: string;
+  advisor?: string;
 }
 
 export interface Experience {

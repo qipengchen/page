@@ -92,7 +92,10 @@ function App() {
                          <div className="font-bold text-slate-800">{edu.degree}</div>
                          <div className="text-sm text-crimson-700 font-medium">{edu.major}</div>
                          <div className="text-xs text-slate-500 mt-1">{edu.institution}, {edu.location}</div>
-                         <div className="text-xs font-mono text-slate-400 mt-1">{edu.period}</div>
+                         {edu.advisor && (
+                           <div className="text-xs text-slate-600 mt-2 font-medium italic leading-relaxed">{edu.advisor}</div>
+                         )}
+                         <div className="text-xs font-mono text-slate-400 mt-2 ml-0.5">{edu.period}</div>
                        </div>
                      ))}
                    </div>
