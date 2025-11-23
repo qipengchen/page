@@ -71,4 +71,11 @@ export interface ProfileData {
   awards: string[];
   skills: SkillCategory[];
   blogs: BlogPost[];
+  scholar?: GoogleScholar;
+}
+
+export interface GoogleScholar {
+  citations: number;
+  hIndex: number;
+  i10Index: number;
 }

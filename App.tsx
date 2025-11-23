@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { PublicationItem } from './components/PublicationItem';
 import { BlogView } from './components/BlogView';
+import { GoogleScholarStats } from './components/GoogleScholarStats';
 import { PROFILE } from './data';
 import { Briefcase, Award, Download, BookOpen } from 'lucide-react';
 
@@ -102,6 +103,23 @@ function App() {
                 </div>
                 
                 <div className="flex flex-col gap-6">
+                   {/* Research Interests - Moved here */}
+                   <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:border-crimson-200 transition-colors">
+                      <h3 className="font-serif font-bold text-slate-900 mb-4 text-sm uppercase tracking-wider">Research Interests</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {PROFILE.interests.map(tag => (
+                          <span key={tag} className="bg-crimson-50 text-crimson-700 px-3 py-1.5 rounded text-xs font-bold border border-crimson-100 hover:bg-crimson-100 transition-colors cursor-default">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                   </div>
+                   {PROFILE.scholar && (
+                    <GoogleScholarStats 
+                      scholar={PROFILE.scholar} 
+                      profileUrl={PROFILE.socials.googleScholar}
+                    />
+                   )}
                    {/* CV Download */}
                    <div className="bg-slate-100 p-6 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
                      <h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
@@ -117,18 +135,6 @@ function App() {
                      >
                        Download PDF
                      </a>
-                   </div>
-
-                   {/* Research Interests - Moved here */}
-                   <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:border-crimson-200 transition-colors">
-                      <h3 className="font-serif font-bold text-slate-900 mb-4 text-sm uppercase tracking-wider">Research Interests</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {PROFILE.interests.map(tag => (
-                          <span key={tag} className="bg-crimson-50 text-crimson-700 px-3 py-1.5 rounded text-xs font-bold border border-crimson-100 hover:bg-crimson-100 transition-colors cursor-default">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
                    </div>
                 </div>
               </div>

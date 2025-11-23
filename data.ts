@@ -1,5 +1,5 @@
 
-import { ProfileData } from './types';
+import { ProfileData, GoogleScholar } from './types';
 import { BLOG_POSTS } from './blogs/index';
 
 // Use the external Google Scholar image as requested
@@ -18,6 +18,11 @@ export const PROFILE: ProfileData = {
     researchgate: "https://www.researchgate.net/profile/Qipeng-Chen-4",
     googleScholar: "https://scholar.google.com/citations?user=8qSJ1GYAAAAJ&hl=en",
     linkedin: "https://www.linkedin.com/in/qipeng-chen-604528271/"
+  },
+  scholar: {
+    citations: 61,
+    hIndex: 5,
+    i10Index: 2
   },
   bio: "Hi! I am a Ph.D. researcher at the University of Alabama, specializing in Educational Research Methods. My work centers on leveraging process data to enhance test security and provide deeper assessment insights.",
   interests: [
