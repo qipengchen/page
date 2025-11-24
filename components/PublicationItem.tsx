@@ -32,16 +32,32 @@ export const PublicationItem: React.FC<Props> = ({ pub, index }) => {
           <p className="text-slate-700 leading-relaxed text-sm md:text-base">
             {renderCitation(pub.citation)}
           </p>
-          {pub.doi && (
-            <a 
-              href={pub.doi} 
-              target="_blank" 
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-crimson-700 hover:underline opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              View DOI <ExternalLink size={10} />
-            </a>
-          )}
+          
+          <div className="flex flex-wrap items-center gap-3 mt-3">
+             {/* Ranking Tags */}
+             {pub.jcr && (
+               <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100 select-none">
+                 JCR {pub.jcr}
+               </span>
+             )}
+             {pub.cas && (
+               <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 select-none">
+                 CAS {pub.cas}
+               </span>
+             )}
+
+             {/* DOI Link */}
+             {pub.doi && (
+              <a 
+                href={pub.doi} 
+                target="_blank" 
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-crimson-600 hover:text-crimson-800 hover:underline transition-colors ml-auto md:ml-0"
+              >
+                View DOI <ExternalLink size={10} />
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </div>

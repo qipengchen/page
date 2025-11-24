@@ -23,6 +23,8 @@ export interface Publication {
   doi?: string;
   year: number;
   title: string; // Extracted title for emphasis if needed
+  jcr?: string;
+  cas?: string;
 }
 
 export interface Project {

@@ -94,7 +94,9 @@ export const PROFILE: ProfileData = {
       year: 2024,
       title: "Improvement and application of back random response detection",
       citation: "Li, Y., **Chen, Q.**, Gao, Y., & Liu, T. (2024). Improvement and application of back random response detection: Based on cumulative sum and change point analysis. *Behavior Research Methods*.",
-      doi: "https://doi.org/10.3758/s13428-024-02495-0"
+      doi: "https://doi.org/10.3758/s13428-024-02495-0",
+      jcr: "Q1",
+      cas: "T2"
     },
     {
       id: "p3",
@@ -115,14 +117,18 @@ export const PROFILE: ProfileData = {
       year: 2023,
       title: "Joint modeling of action sequences and action time",
       citation: "Fu, Y., Zhan, P., **Chen, Q.**, & Jiao, H. (2023). Joint modeling of action sequences and action time in computer-based interactive tasks. *Behavior Research Methods*.",
-      doi: "https://doi.org/10.3758/s13428-023-02178-2"
+      doi: "https://doi.org/10.3758/s13428-023-02178-2",
+      jcr: "Q1",
+      cas: "T2"
     },
     {
       id: "p6",
       year: 2023,
       title: "Using a multi-strategy eye-tracking psychometric model",
       citation: "Liu, Y., Zhan, P., Fu, Y., **Chen, Q.**, Man, K., & Luo, Y. (2023). Using a multi-strategy eye-tracking psychometric model to measure intelligence and identify cognitive strategy in Raven’s Advanced Progressive Matrices. *Intelligence*, 100, 101782.",
-      doi: "https://doi.org/10.1016/j.intell.2023.101782"
+      doi: "https://doi.org/10.1016/j.intell.2023.101782",
+      jcr: "Q1",
+      cas: "T2"
     },
     {
       id: "p7",
@@ -136,7 +142,9 @@ export const PROFILE: ProfileData = {
       year: 2023,
       title: "Longitudinal joint modeling for assessing parallel interactive development",
       citation: "Zhan, P., **Chen, Q.**, Wang, S., & Zhang, X. (2023). Longitudinal joint modeling for assessing parallel interactive development of latent ability and processing speed using responses and Response Times. *Behavior Research Methods*.",
-      doi: "https://doi.org/10.3758/s13428-023-02113-5"
+      doi: "https://doi.org/10.3758/s13428-023-02113-5",
+      jcr: "Q1",
+      cas: "T2"
     }
   ],
   projects: [
