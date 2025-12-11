@@ -78,3 +78,7 @@ out
 # Vite
 .vite
 
+# GitHub Actions - DO NOT IGNORE (deployment files should be tracked)
+!.github/
+!.github/**
+
