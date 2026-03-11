@@ -1,0 +1,121 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Order By\n      Default\n      \n        Title\n      \n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Author\n      \n    \n  \n\n\n\n\n\n\n\n\n\n\nDichotomous Item Response Theory Models with NumPyro\n\n\n\nNumpyro\n\nBayesian Inference\n\nTutorial\n\n\n\n\n\n\n\n\n\nMar 10, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nIntroduction to Cognitive Diagnosis Models (CDM)\n\n\n\nPsychometrics\n\nR\n\nStatistics\n\n\n\n\n\n\n\n\n\nFeb 14, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nLinux Server Configuration Guide\n\n\n\nLinux\n\nDevOps\n\nTutorial\n\n\n\n\n\n\n\n\n\nJan 23, 2025\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/estimate_dichotomous_irt_numpyro.html",
+    "href": "posts/estimate_dichotomous_irt_numpyro.html",
+    "title": "Dichotomous Item Response Theory Models with NumPyro",
+    "section": "",
+    "text": "This notebook shows how to use NumPyro to implement classical dichotomous item response theory (IRT) models (1PL–4PL) and perform Bayesian inference for the LSAT Section VI data.\nIn dichotomous IRT, we can start from a unified 4PL formulation to describe the probability that examinee \\(i\\) answers item \\(j\\) correctly:\n\\[\nP(Y_{ij}=1 \\mid \\theta_i, a_j, b_j, c_j, d_j)\n= c_j + (d_j-c_j)\\,\\operatorname{logit}^{-1}\\bigl(a_j(\\theta_i - b_j)\\bigr) \\, ,\n\\]\nwhere \\(\\theta_i\\) is examinee ability, \\(a_j\\) is item discrimination, \\(b_j\\) is item difficulty, \\(c_j\\) is the lower asymptote (guessing) parameter, and \\(d_j\\) is the upper asymptote parameter. By imposing constraints on these parameters, the 4PL model can be reduced stepwise to lower‑order models:\nAgain, \\(\\theta_i\\) denotes ability, \\(a_j\\) discrimination, \\(b_j\\) difficulty, \\(c_j\\) the guessing (lower asymptote), and \\(d_j\\) the upper asymptote.\nDependencies: This tutorial requires jax, jaxlib, numpyro, arviz, pandas, numpy, xarray, and matplotlib. If they are not installed, you can uncomment and run the following cell.\n# Optional: install dependencies (uncomment if needed)\n# %pip install jax jaxlib numpyro arviz pandas numpy xarray matplotlib"
+  },
+  {
+    "objectID": "posts/estimate_dichotomous_irt_numpyro.html#priors-following-noah-padgett",
+    "href": "posts/estimate_dichotomous_irt_numpyro.html#priors-following-noah-padgett",
+    "title": "Dichotomous Item Response Theory Models with NumPyro",
+    "section": "2.1 Priors (following Noah Padgett)",
+    "text": "2.1 Priors (following Noah Padgett)\n\nDifficulty parameters\n\n\\(b_j \\sim \\text{Normal}(0, 10)\\)\n\nDiscrimination parameters (estimated only in 2PL / 3PL / 4PL)\n\n\\(a_j \\sim \\text{LogNormal}(0, 1)\\)\n\nGuessing parameters (estimated only in 3PL / 4PL)\n\n\\(c_j \\sim \\text{Beta}(5, 25)\\)\n\nUpper asymptote parameters (estimated only in 4PL)\n\n\\(d_j \\sim \\text{Beta}(25, 5)\\)"
+  },
+  {
+    "objectID": "posts/estimate_dichotomous_irt_numpyro.html#setting-for-the-1pl-model",
+    "href": "posts/estimate_dichotomous_irt_numpyro.html#setting-for-the-1pl-model",
+    "title": "Dichotomous Item Response Theory Models with NumPyro",
+    "section": "2.2 Setting for the 1PL model",
+    "text": "2.2 Setting for the 1PL model\n\nFix the discrimination parameters:\n\n\\(a_j = 1\\)\n\nUse a non‑centered parameterization for ability:\n\n\\(\\theta_{\\text{raw}} \\sim \\text{Normal}(0, 1)\\)\n\n\\(\\sigma_\\theta \\sim \\text{HalfNormal}(1)\\)\n\n\\(\\theta = \\theta_{\\text{raw}} \\cdot \\sigma_\\theta\\)"
+  },
+  {
+    "objectID": "posts/estimate_dichotomous_irt_numpyro.html#pl-3pl-4pl-models",
+    "href": "posts/estimate_dichotomous_irt_numpyro.html#pl-3pl-4pl-models",
+    "title": "Dichotomous Item Response Theory Models with NumPyro",
+    "section": "2.3 2PL / 3PL / 4PL models",
+    "text": "2.3 2PL / 3PL / 4PL models\n\nAbility parameters:\n\n\\(\\theta_i \\sim \\text{Normal}(0, 1)\\)\n\nWe estimate simultaneously:\n\n\\(a_j\\) (discrimination)\n\\(c_j\\) (guessing, in 3PL / 4PL)\n\\(d_j\\) (upper asymptote, in 4PL)\n\n\n\ndef irt_model(obs, model_type=\"2PL\", n=None, j=None):\n    \"\"\"\n    Dichotomous IRT model: 1PL, 2PL, 3PL, or 4PL.\n    obs: observed response matrix, shape (N, J); if None, \"y\" is sampled (posterior predictive), and n, j must be given.\n    model_type: one of \"1PL\", \"2PL\", \"3PL\", \"4PL\".\n    n, j: when obs is None, number of persons and items (required for posterior predictive).\n    \"\"\"\n    N, J = (obs.shape if obs is not None else (n, j))\n    assert model_type in (\"1PL\", \"2PL\", \"3PL\", \"4PL\")\n\n    # Item difficulty (all models): b_j ~ Normal(0, 10)\n    b = numpyro.sample(\"b\", dist.Normal(0.0, 10.0).expand([J]))\n\n    if model_type == \"1PL\":\n        # Non-centered parameterization for sampling efficiency\n        # see https://mc-stan.org/docs/2_21/stan-users-guide/reparameterizations.html\n        theta_raw = numpyro.sample(\"theta_raw\", dist.Normal(0.0, 1.0).expand([N]))\n        sigma_theta = numpyro.sample(\"sigma_theta\", dist.HalfNormal(1.0))\n        theta = theta_raw * sigma_theta\n        a = jnp.ones(J)  # fix a_j = 1\n    else:\n        theta = numpyro.sample(\"theta\", dist.Normal(0.0, 1.0).expand([N]))\n        a = numpyro.sample(\"a\", dist.LogNormal(0.0, 1.0).expand([J]))\n\n    if model_type in (\"3PL\", \"4PL\"):\n        c = numpyro.sample(\"c\", dist.Beta(5.0, 25.0).expand([J]))\n    else:\n        c = jnp.zeros(J)\n\n    if model_type == \"4PL\":\n        d = numpyro.sample(\"d\", dist.Beta(25.0, 5.0).expand([J]))\n    else:\n        d = jnp.ones(J)\n\n    # P(Y=1): eta = a*(theta - b), then c + (d-c)*sigmoid(eta)\n    eta = a * (theta[:, None] - b[None, :])\n    p = numpyro.deterministic(\"p\", c + (d - c) * jax.nn.sigmoid(eta))\n    numpyro.sample(\"y\", dist.Bernoulli(probs=p), obs=obs)"
+  },
+  {
+    "objectID": "posts/estimate_dichotomous_irt_numpyro.html#mcmc-and-inferencedata",
+    "href": "posts/estimate_dichotomous_irt_numpyro.html#mcmc-and-inferencedata",
+    "title": "Dichotomous Item Response Theory Models with NumPyro",
+    "section": "2.4 MCMC and InferenceData",
+    "text": "2.4 MCMC and InferenceData\nWe use NUTS for sampling and convert the results to ArviZ InferenceData objects.\n\ndef run_mcmc_and_idata(\n    data,\n    model_type,\n    num_warmup=2000,\n    num_samples=2000,\n    num_chains=2,\n    rng_key=RNG_KEY,\n):\n    \"\"\"Run NUTS for a given model_type and return InferenceData with posterior, posterior_predictive and log_likelihood.\"\"\"\n    kernel = NUTS(irt_model)\n    mcmc = MCMC(kernel, num_warmup=num_warmup, num_samples=num_samples, num_chains=num_chains)\n    N, J = data.shape\n    mcmc.run(rng_key, data, model_type=model_type)\n\n    # posterior predictive given posterior draws\n    posterior_samples = mcmc.get_samples(group_by_chain=True)\n    predictive = Predictive(irt_model, posterior_samples=posterior_samples, batch_ndims=2)\n    posterior_predictive = predictive(rng_key, None, model_type=model_type, n=N, j=J)  # dict, e.g. {\"y\": ...}\n\n    # ArviZ automatically calls NumPyro's log_likelihood under the hood\n    idata = az.from_numpyro(mcmc, posterior_predictive=posterior_predictive, log_likelihood=True)\n    return idata"
+  },
+  {
+    "objectID": "posts/estimate_dichotomous_irt_numpyro.html#trace-plots-and-rank-plots",
+    "href": "posts/estimate_dichotomous_irt_numpyro.html#trace-plots-and-rank-plots",
+    "title": "Dichotomous Item Response Theory Models with NumPyro",
+    "section": "3.1 Trace plots and rank plots",
+    "text": "3.1 Trace plots and rank plots\nWe select a key parameter (here, \\(b_1\\) under the 1PL model) and use trace plots and rank plots to diagnose convergence.\n\n# Trace plot for b (difficulty parameters)\naz.plot_trace_dist(idatas[\"1PL\"], var_names=[\"b\"], compact=False)\nplt.tight_layout()\n\n\n\n\n\n\n\n\n\nInterpretation of rank plots\nA rank plot is often a more sensitive MCMC convergence diagnostic than a traditional trace plot.\nThe core idea is: first pool samples from all chains and sort them (ranking) by value, then examine how much each chain contributes to each rank bin. If the chains are mixing well and exploring the same posterior distribution, the contributions should be approximately uniform across ranks.\nIn arviz visualizations, the rank plot typically includes a gray confidence envelope that represents the range of random variation we would expect if all chains had perfectly converged and mixed well:\n\nGood convergence: each chain’s curve (or bars) is roughly flat and stays mostly within the gray envelope, indicating that all chains explore the posterior space in a similar way.\nPoor convergence: if the curves show a clear monotone pattern (e.g., upward or downward), it suggests that some chains are systematically larger or smaller; U‑shaped or hump‑shaped curves indicate low sampling efficiency and insufficient exploration of some regions of the posterior.\n\n\n# Rank plot for b (difficulty parameters)\naz.plot_rank_dist(idatas[\"1PL\"], var_names=[\"b\"], compact=False)\nplt.tight_layout()"
+  },
+  {
+    "objectID": "posts/estimate_dichotomous_irt_numpyro.html#posterior-predictive-checks-and-ppp-absolute-fit",
+    "href": "posts/estimate_dichotomous_irt_numpyro.html#posterior-predictive-checks-and-ppp-absolute-fit",
+    "title": "Dichotomous Item Response Theory Models with NumPyro",
+    "section": "3.2 Posterior predictive checks and PPP (absolute fit)",
+    "text": "3.2 Posterior predictive checks and PPP (absolute fit)\nWe use posterior predictive checks (PPC) to assess the absolute fit of the model. Following the chi-square statistic for residuals (Sinharay, Johnson, & Stern, 2006):\n\\[\\chi^2 = \\sum_{i=1}^{N} \\sum_{j=1}^{J} \\frac{(y_{ij} - P_{ij})^2}{P_{ij}(1 - P_{ij})}\\]\nPosterior Predictive P‑value (ppp): for each posterior draw, generate replicated data, compute \\(\\chi^2_{\\text{rep}}\\) for the replicated data and \\(\\chi^2_{\\text{obs}}\\) for the observed data (using the same \\(P_{ij}\\) from that draw). The PPP is the posterior proportion \\[\\mathbb{P}(\\chi^2_{\\text{rep}} \\geq \\chi^2_{\\text{obs}}).\\]\nSinharay, S., Johnson, M. S., & Stern, H. S. (2006). Posterior predictive assessment of item response theory models. Applied Psychological Measurement, 30(4), 298‐321. https://doi.org/10.1177/0146621605285517\nA ppp close to 0.5 typically indicates that the model fits the data reasonably well; values that are very small or very large suggest potential misfit and can be used together with WAIC/LOO for model selection.\n\ndef chi2_irt(y, p):\n    \"\"\"Chi-squared statistic for responses:\n    sum_ij (y_ij - p_ij)^2 / (p_ij * (1 - p_ij)). Clips p for numerical stability.\"\"\"\n    eps = 1e-12\n    p = np.clip(p, eps, 1.0 - eps)\n    return (y - p) ** 2 / (p * (1.0 - p))\n\ndef posterior_predictive_p_value(data, idata):\n    \"\"\"Compute PPP using posterior samples: P(chi2_rep &gt;= chi2_obs).\"\"\"\n    # data:(N,J) -&gt; (1,1,N,J); idata.posterior[\"p\"]:(n_chains, n_draws, N, J)\n    chi2_obs_arr = chi2_irt(data[None, None], idata.posterior[\"p\"].values)\n    # idata.posterior_predictive[\"y\"]: (n_chains, n_draws, N, J)\n    # idata.posterior[\"p\"]: (n_chains, n_draws, N, J)\n    chi2_rep_arr = chi2_irt(idata.posterior_predictive[\"y\"].values,\n                             idata.posterior[\"p\"].values)\n    ppp = np.mean(chi2_rep_arr.sum(axis=(-1, -2)) &gt;= chi2_obs_arr.sum(axis=(-1, -2)))\n    return ppp, chi2_obs_arr, chi2_rep_arr\n\n\n# PPP for 2PL (example)\nppp_2pl, chi2_obs, chi2_rep = posterior_predictive_p_value(Y, idatas[\"2PL\"])\nprint(f\"Posterior Predictive P-value (PPP): {ppp_2pl:.4f}\")\nprint(f\"Mean chi2 (observed): {chi2_obs.sum(axis=(-1,-2)).mean():.2f}; Mean chi2 (replicated): {chi2_rep.sum(axis=(-1,-2)).mean():.2f}\")\n\nPosterior Predictive P-value (PPP): 0.4923\nMean chi2 (observed): 5023.37; Mean chi2 (replicated): 5003.82\n\n\n\nplt.hist(chi2_obs.sum(axis=(-1, -2)).flatten(), label=\"obs\", color=\"C0\", bins=100)\nplt.hist(chi2_rep.sum(axis=(-1, -2)).flatten(), label=\"rep\", color=\"C1\", bins=100)\nplt.legend()\nplt.show()"
+  },
+  {
+    "objectID": "posts/b2-cdm-intro.html",
+    "href": "posts/b2-cdm-intro.html",
+    "title": "Introduction to Cognitive Diagnosis Models (CDM)",
+    "section": "",
+    "text": "Cognitive Diagnosis Models (CDMs) are a class of latent variable models used to diagnose the presence or absence of specific fine-grained attributes (skills) required to solve test items."
+  },
+  {
+    "objectID": "posts/b2-cdm-intro.html#why-cdms",
+    "href": "posts/b2-cdm-intro.html#why-cdms",
+    "title": "Introduction to Cognitive Diagnosis Models (CDM)",
+    "section": "1 Why CDMs?",
+    "text": "1 Why CDMs?\nUnlike traditional IRT models that place students on a continuous scale of ability (\\(\\\\theta\\)), CDMs classify students into latent classes based on mastery profiles.\n\nDiagnostic Feedback: Provides detailed strengths and weaknesses.\nRemediation: Helps teachers target specific skills for improvement."
+  },
+  {
+    "objectID": "posts/b2-cdm-intro.html#the-dina-model",
+    "href": "posts/b2-cdm-intro.html#the-dina-model",
+    "title": "Introduction to Cognitive Diagnosis Models (CDM)",
+    "section": "2 The DINA Model",
+    "text": "2 The DINA Model\nThe Deterministic Input, Noisy “And” gate (DINA) model is one of the most popular CDMs. It assumes that a student must master all required attributes to answer an item correctly.\n\n2.1 Key Parameters\n\nGuessing (g): Probability of answering correctly despite lacking skills.\nSlipping (s): Probability of answering incorrectly despite having skills."
+  },
+  {
+    "objectID": "posts/b2-cdm-intro.html#implementation-in-r",
+    "href": "posts/b2-cdm-intro.html#implementation-in-r",
+    "title": "Introduction to Cognitive Diagnosis Models (CDM)",
+    "section": "3 Implementation in R",
+    "text": "3 Implementation in R\nWe can use the GDINA package in R to estimate these models.\n\n3.1 1. Load Data & Package\n\nlibrary(GDINA)\n\nGDINA R Package (version 2.9.12; 2025-07-01)\nFor tutorials, see https://wenchao-ma.github.io/GDINA\n\n# use built-in example data from GDINA\ndata(sim10GDINA)\ndat &lt;- sim10GDINA$simdat\nQ &lt;- sim10GDINA$simQ\n\n\n\n3.2 2. Fit the Model\n\nest &lt;- GDINA(dat = dat, Q = Q, model = \"DINA\", verbose = FALSE)\nsummary(est)\n\n\nTest Fit Statistics\n\nLoglik = -6089.01 \n\nAIC    = 12232.01  | penalty [2 * p]  = 54.00 \nAICc   = 12179.57  | penalty [2 * p * (p+1) / (n - p - 1)]  = 213.51 \nBIC    = 12364.52  | penalty [log(n) * p]  = 186.51 \nCAIC   = 12391.52  | penalty [(log(n) + 1) * p]  = 213.51 \nSABIC  = 12278.77  | penalty [log((n + 2)/24) * p]  = 100.76 \n\nNo. of parameters (p)  = 27 \n  No. of estimated item parameters =  20 \n  No. of fixed item parameters =  0 \n  No. of distribution parameters =  7 \n\nAttribute Prevalence\n\n   Level0 Level1\nA1 0.2741 0.7259\nA2 0.4193 0.5807\nA3 0.4576 0.5424\n\n\n\n\n3.3 3. Visualize Results\nWe can plot the item parameters to see which items are the most difficult or prone to slipping.\n\nplot(est, what = \"IRF\", item = 4)\n\n\n\n\n\n\n\n\n\nNote: This is a simplified example. Real-world applications often require Q-matrix validation and model fit analysis.\n\nIn future posts, I will discuss how to handle longitudinal data in CDMs using the methods described in my recent Language Assessment Quarterly paper."
+  },
+  {
+    "objectID": "posts/b1-linux-server.html",
+    "href": "posts/b1-linux-server.html",
+    "title": "Linux Server Configuration Guide",
+    "section": "",
+    "text": "This guide covers the essential first steps when configuring a Linux server for research or web hosting purposes."
+  },
+  {
+    "objectID": "posts/b1-linux-server.html#initial-system-update",
+    "href": "posts/b1-linux-server.html#initial-system-update",
+    "title": "Linux Server Configuration Guide",
+    "section": "1 1. Initial System Update",
+    "text": "1 1. Initial System Update\nBefore installing any dependencies, always ensure your package lists and current software are up to date.\nsudo apt update && sudo apt upgrade -y"
+  },
+  {
+    "objectID": "posts/b1-linux-server.html#user-management",
+    "href": "posts/b1-linux-server.html#user-management",
+    "title": "Linux Server Configuration Guide",
+    "section": "2 2. User Management",
+    "text": "2 2. User Management\nIt is best practice not to use the root account for daily operations. Create a new user with sudo privileges.\n\n2.1 Create a new user\nReplace qipeng with your desired username:\nsudo adduser qipeng\n\n\n2.2 Grant sudo privileges\nAdd the new user to the sudo group:\nsudo usermod -aG sudo qipeng"
+  },
+  {
+    "objectID": "posts/b1-linux-server.html#ssh-security-configuration",
+    "href": "posts/b1-linux-server.html#ssh-security-configuration",
+    "title": "Linux Server Configuration Guide",
+    "section": "3 3. SSH Security Configuration",
+    "text": "3 3. SSH Security Configuration\nSecuring SSH is critical. We will disable root login and enforce key-based authentication (optional but recommended).\nEdit the configuration file:\nsudo nano /etc/ssh/sshd_config\nFind and modify the following lines:\n\nPermitRootLogin: Set to no\nPasswordAuthentication: Set to no (only if you have set up SSH keys)\n\n\nTip: Always test your new SSH configuration in a new terminal window before closing your current session to avoid locking yourself out!\n\nRestart the SSH service to apply changes:\nsudo systemctl restart ssh"
+  },
+  {
+    "objectID": "posts/b1-linux-server.html#basic-firewall-ufw",
+    "href": "posts/b1-linux-server.html#basic-firewall-ufw",
+    "title": "Linux Server Configuration Guide",
+    "section": "4 4. Basic Firewall (UFW)",
+    "text": "4 4. Basic Firewall (UFW)\nUbuntu comes with UFW (Uncomplicated Firewall). Enable it to allow only necessary ports.\nsudo ufw allow OpenSSH\nsudo ufw enable\nNow your server is secure and ready for development!"
+  }
+]

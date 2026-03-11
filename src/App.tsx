@@ -37,7 +37,9 @@ function App() {
   const handleNavigate = (id: string) => {
     if (id === 'blog') {
       // Navigate directly to the Quarto blog home page in a new tab
-      window.open('/blog/index.html', '_blank', 'noopener,noreferrer');
+      const base = import.meta.env.BASE_URL ?? '/';
+      const blogUrl = `${base.replace(/\/$/, '')}/blog/`;
+      window.open(blogUrl, '_blank', 'noopener,noreferrer');
       return;
     } else {
       setCurrentView('home');

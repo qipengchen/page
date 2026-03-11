@@ -7,8 +7,11 @@
 
 - Install dependencies: `npm install`
 - Run dev server (homepage only): `npm run dev`
-- Build homepage: `npm run build`
-- Build blog (qmd / ipynb → HTML): `npm run build:blog`
-- Build both and preview production:  
-  - `npm run build:all`  
+- Build homepage (local): `npm run build`
+- Build blog (qmd / ipynb → HTML, local): `npm run build:blog`
+- Build both (local, for GitHub Pages): `npm run build:all`
+- Preview local production build:  
   - `npm run preview`
+
+> Note: All blog HTML in `dist/blog/` is pre-rendered locally.  
+> GitHub Actions only uploads the existing `dist/` folder to Pages and does not run R / Quarto. To update blog pages, rerun `npm run build:blog` or `npm run build:all` locally and commit the updated `dist/` files.
