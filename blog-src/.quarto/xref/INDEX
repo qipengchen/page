@@ -1,0 +1,14 @@
+{
+  "posts/b2-cdm-intro.qmd": {
+    "b2-cdm-intro.html": "716163a0"
+  },
+  "posts/estimate_dichotomous_irt_numpyro.ipynb": {
+    "estimate_dichotomous_irt_numpyro.html": "4afe4d96"
+  },
+  "posts/b1-linux-server.qmd": {
+    "b1-linux-server.html": "8e227bcf"
+  },
+  "index.qmd": {
+    "index.html": "db70592f"
+  }
+}

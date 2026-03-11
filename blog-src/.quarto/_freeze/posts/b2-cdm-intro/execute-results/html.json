@@ -1,0 +1,17 @@
+{
+  "hash": "dc49992f5a024f148cf72c903cfb646d",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Introduction to Cognitive Diagnosis Models (CDM)\"\ndate: 2025-02-14\ncategories: [\"Psychometrics\", \"R\", \"Statistics\"]\n---\n\nCognitive Diagnosis Models (CDMs) are a class of latent variable models used to diagnose the presence or absence of specific fine-grained attributes (skills) required to solve test items.\n\n## Why CDMs?\n\nUnlike traditional IRT models that place students on a continuous scale of ability ($\\\\theta$), CDMs classify students into latent classes based on mastery profiles.\n\n- **Diagnostic Feedback**: Provides detailed strengths and weaknesses.\n- **Remediation**: Helps teachers target specific skills for improvement.\n\n## The DINA Model\n\nThe *Deterministic Input, Noisy \"And\" gate* (DINA) model is one of the most popular CDMs. It assumes that a student must master **all** required attributes to answer an item correctly.\n\n### Key Parameters\n\n1. **Guessing (g)**: Probability of answering correctly despite lacking skills.\n2. **Slipping (s)**: Probability of answering incorrectly despite having skills.\n\n## Implementation in R\n\nWe can use the `GDINA` package in R to estimate these models.\n\n### 1. Load Data & Package\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(GDINA)\n```\n\n::: {.cell-output .cell-output-stderr}\n\n```\nGDINA R Package (version 2.9.12; 2025-07-01)\nFor tutorials, see https://wenchao-ma.github.io/GDINA\n```\n\n\n:::\n\n```{.r .cell-code}\n# use built-in example data from GDINA\ndata(sim10GDINA)\ndat <- sim10GDINA$simdat\nQ <- sim10GDINA$simQ\n```\n:::\n\n\n### 2. Fit the Model\n\n\n::: {.cell}\n\n```{.r .cell-code}\nest <- GDINA(dat = dat, Q = Q, model = \"DINA\", verbose = FALSE)\nsummary(est)\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n\nTest Fit Statistics\n\nLoglik = -6089.01 \n\nAIC    = 12232.01  | penalty [2 * p]  = 54.00 \nAICc   = 12179.57  | penalty [2 * p * (p+1) / (n - p - 1)]  = 213.51 \nBIC    = 12364.52  | penalty [log(n) * p]  = 186.51 \nCAIC   = 12391.52  | penalty [(log(n) + 1) * p]  = 213.51 \nSABIC  = 12278.77  | penalty [log((n + 2)/24) * p]  = 100.76 \n\nNo. of parameters (p)  = 27 \n  No. of estimated item parameters =  20 \n  No. of fixed item parameters =  0 \n  No. of distribution parameters =  7 \n\nAttribute Prevalence\n\n   Level0 Level1\nA1 0.2741 0.7259\nA2 0.4193 0.5807\nA3 0.4576 0.5424\n```\n\n\n:::\n:::\n\n\n### 3. Visualize Results\n\nWe can plot the item parameters to see which items are the most difficult or prone to slipping.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nplot(est, what = \"IRF\", item = 4)\n```\n\n::: {.cell-output-display}\n![](b2-cdm-intro_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n\n\n> **Note**: This is a simplified example. Real-world applications often require Q-matrix validation and model fit analysis.\n\nIn future posts, I will discuss how to handle longitudinal data in CDMs using the methods described in my recent *Language Assessment Quarterly* paper.\n\n",
+    "supporting": [
+      "b2-cdm-intro_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

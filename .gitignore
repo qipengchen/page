@@ -1,0 +1,13 @@
+node_modules
+dist
+.DS_Store
+*.local
+*.log
+vite
+.cache
+.env
+.env.*
+.history
+.cursor
+*.ipynb_checkpoints
+

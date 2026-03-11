@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "page",
+			"path": "."
+		},
+		{
+			"name": "blogs",
+			"path": "../../../../../../../Downloads/tt/qipeng-chen---academic-portfolio/blogs"
+		},
+		{
+			"name": "components",
+			"path": "../../../../../../../Downloads/tt/qipeng-chen---academic-portfolio/components"
+		}
+	],
+	"settings": {}
+}
