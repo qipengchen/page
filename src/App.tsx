@@ -36,10 +36,10 @@ function App() {
 
   const handleNavigate = (id: string) => {
     if (id === 'blog') {
-      // Navigate directly to the Quarto blog home page in a new tab
-      const base = import.meta.env.BASE_URL ?? '/';
-      const blogUrl = `${base.replace(/\/$/, '')}/blog/`;
-      window.open(blogUrl, '_blank', 'noopener,noreferrer');
+      // Open the Quarto blog home page in a new tab, relative to the current site root.
+      // On GitHub Pages (https://qipengchen.github.io/page/), 'blog/' -> /page/blog/
+      // On local dev (http://localhost:5173/), 'blog/' -> /blog/ (no content, which is acceptable).
+      window.open('blog/', '_blank', 'noopener,noreferrer');
       return;
     } else {
       setCurrentView('home');
