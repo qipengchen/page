@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://qipengchen.github.io/page/sitemap.xml
+
